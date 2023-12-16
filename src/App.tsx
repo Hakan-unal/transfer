@@ -1,5 +1,6 @@
-import { Row, Col, Card, Checkbox } from "antd";
+import { Row, Col, Card, Checkbox, Space } from "antd";
 import { useState } from "react";
+import { AiOutlineArrowRight, AiOutlineArrowLeft } from "react-icons/ai";
 
 const data1 = [
    { name: "name1", id: 1 },
@@ -47,6 +48,25 @@ const App = () => {
       }
    };
 
+   const handleMove = (type: string) => {
+      let tempArr: any = null;
+      const emptyArr: any = [];
+      switch (type) {
+         case "left":
+            tempArr = [...rightSelected, ...leftSide];
+            setLeftSide(tempArr);
+            setRightSelected(emptyArr);
+
+            break;
+         case "right":
+            tempArr = [...leftSelected, ...rightSide];
+            setRightSide(tempArr);
+            setLeftSelected(emptyArr);
+            break;
+      }
+      console.log(type);
+   };
+
    const Component = (tempArr: any, type: string) => {
       return tempArr.map((obj: any) => (
          <Row>
@@ -67,7 +87,20 @@ const App = () => {
             </Card>
          </Col>
 
-         <Col span={2}>test</Col>
+         <Col span={1} offset={1}>
+            <Space direction="vertical">
+               <AiOutlineArrowRight
+                  onClick={() => handleMove("right")}
+                  style={{ cursor: "pointer" }}
+                  size={20}
+               />
+               <AiOutlineArrowLeft
+                  onClick={() => handleMove("left")}
+                  style={{ cursor: "pointer" }}
+                  size={20}
+               />
+            </Space>
+         </Col>
 
          <Col span={4}>
             <Card title={`${rightSelected.length}/${rightSide.length}`}>
