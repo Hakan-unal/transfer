@@ -1,73 +1,77 @@
-import { Row, Select, Col, Card, Image } from "antd";
-import type { SelectProps } from "antd";
-import { CiFlag1 } from "react-icons/ci";
-import { translator } from "./language/translator";
+import { Row, Col, Card, Checkbox } from "antd";
 import { useState } from "react";
 
-import de from "./assets/de.png";
-import en from "./assets/en.jpg";
-import tr from "./assets/tr.png";
+const data1 = [
+   { name: "name1", id: 1 },
+   { name: "name2", id: 2 },
+   { name: "name3", id: 3 },
+   { name: "name4", id: 4 },
+   { name: "name5", id: 5 },
+   { name: "name6", id: 6 },
+   { name: "name7", id: 7 },
+   { name: "name8", id: 8 },
+   { name: "name9", id: 9 },
+];
 
-const languages = {
-   de: de,
-   en: en,
-   tr: tr,
-};
-
-const options: SelectProps["options"] = [
-   {
-      label: (
-         <>
-            <CiFlag1 /> Turkey (tr)
-         </>
-      ),
-      value: "tr",
-   },
-   {
-      label: (
-         <>
-            <CiFlag1 /> English (en)
-         </>
-      ),
-      value: "en",
-   },
-   {
-      label: (
-         <>
-            <CiFlag1 /> Deutch (de)
-         </>
-      ),
-      value: "de",
-   },
+const data2 = [
+   { name: "name10", id: 10 },
+   { name: "name11", id: 11 },
+   { name: "name12", id: 12 },
+   { name: "name13", id: 13 },
+   { name: "name14", id: 14 },
+   { name: "name15", id: 15 },
+   { name: "name16", id: 16 },
+   { name: "name17", id: 17 },
+   { name: "name18", id: 18 },
 ];
 
 const App = () => {
-   const [language, setLanguage] = useState<string>("tr");
+   const [leftSide, setLeftSide] = useState(data1);
+   const [rightSide, setRightSide] = useState(data2);
+   const [leftSelected, setLeftSelected] = useState([]);
+   const [rightSelected, setRightSelected] = useState([]);
 
-   const handleChange = (value: string) => {
-      setLanguage(value);
+   const handleCheck = (obj: any, type: string) => {
+      let tempArr: any = null;
+      switch (type) {
+         case "left":
+            tempArr = [...leftSelected];
+            tempArr.push(obj);
+            setLeftSelected(tempArr);
+            break;
+         case "right":
+            tempArr = [...rightSelected];
+            tempArr.push(obj);
+            setRightSelected(tempArr);
+            break;
+      }
+   };
+
+   const Component = (tempArr: any, type: string) => {
+      return tempArr.map((obj: any) => (
+         <Row>
+            <Col span={4}>
+               <Checkbox onClick={() => handleCheck(obj, type)}>
+                  {obj.name}
+               </Checkbox>
+            </Col>
+         </Row>
+      ));
    };
 
    return (
-      <Row justify={"center"}>
-         <Col span={8}>
-            <Card
-               title={translator("test", language)}
-               cover={
-                  <Image
-                     preview={false}
-                     src={languages[language as keyof typeof languages]}
-                  />
-               }
-            >
-               <Select
-                  value={language}
-                  style={{ width: "100%" }}
-                  placeholder="Select language"
-                  onChange={handleChange}
-                  optionLabelProp="label"
-                  options={options}
-               />
+      <Row justify={"center"} align={"middle"}>
+         <Col span={4}>
+            <Card title={`${leftSelected.length}/${leftSide.length}`}>
+               {Component(leftSide, "left")}
+            </Card>
+         </Col>
+
+         <Col span={2}>test</Col>
+
+         <Col span={4}>
+            <Card title={`${rightSelected.length}/${rightSide.length}`}>
+               {Component(rightSide, "right")}
             </Card>
          </Col>
       </Row>
