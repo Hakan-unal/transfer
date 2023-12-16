@@ -1,4 +1,4 @@
-import { Row, Col, Card, Checkbox, Space } from "antd";
+import { Row, Col, Card, Checkbox, Space, Form } from "antd";
 import { useState } from "react";
 import { AiOutlineArrowRight, AiOutlineArrowLeft } from "react-icons/ai";
 
@@ -32,6 +32,8 @@ const App = () => {
    const [leftSelected, setLeftSelected] = useState([]);
    const [rightSelected, setRightSelected] = useState([]);
 
+   const [form] = Form.useForm();
+
    const handleCheck = (obj: any, type: string) => {
       let tempArr: any = null;
       switch (type) {
@@ -50,30 +52,43 @@ const App = () => {
 
    const handleMove = (type: string) => {
       let tempArr: any = null;
+      let swapArr: any = null;
       const emptyArr: any = [];
+
       switch (type) {
          case "left":
-            tempArr = [...rightSelected, ...leftSide];
+            tempArr = [...leftSide, ...rightSelected];
+            swapArr = rightSide.filter(
+               ({ id: id1 }) =>
+                  !rightSelected.some(({ id: id2 }) => id2 === id1)
+            );
             setLeftSide(tempArr);
+            setRightSide(swapArr);
             setRightSelected(emptyArr);
-
             break;
          case "right":
-            tempArr = [...leftSelected, ...rightSide];
+            tempArr = [...rightSide, ...leftSelected];
+            swapArr = leftSide.filter(
+               ({ id: id1 }) => !leftSelected.some(({ id: id2 }) => id2 === id1)
+            );
             setRightSide(tempArr);
+            setLeftSide(swapArr);
             setLeftSelected(emptyArr);
             break;
       }
-      console.log(type);
+
+      form.resetFields();
    };
 
    const Component = (tempArr: any, type: string) => {
       return tempArr.map((obj: any) => (
          <Row>
             <Col span={4}>
-               <Checkbox onClick={() => handleCheck(obj, type)}>
-                  {obj.name}
-               </Checkbox>
+               <Form.Item name={obj.name}>
+                  <Checkbox onClick={() => handleCheck(obj, type)}>
+                     {obj.name}
+                  </Checkbox>
+               </Form.Item>
             </Col>
          </Row>
       ));
@@ -83,7 +98,9 @@ const App = () => {
       <Row justify={"center"} align={"middle"}>
          <Col span={4}>
             <Card title={`${leftSelected.length}/${leftSide.length}`}>
-               {Component(leftSide, "left")}
+               <Form layout="horizontal" form={form}>
+                  {Component(leftSide, "left")}
+               </Form>
             </Card>
          </Col>
 
@@ -104,7 +121,9 @@ const App = () => {
 
          <Col span={4}>
             <Card title={`${rightSelected.length}/${rightSide.length}`}>
-               {Component(rightSide, "right")}
+               <Form layout="horizontal" form={form}>
+                  {Component(rightSide, "right")}
+               </Form>
             </Card>
          </Col>
       </Row>
